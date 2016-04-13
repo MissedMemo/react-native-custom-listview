@@ -7,46 +7,69 @@ import React, {
   TextInput,
   ListView,
   Image,
-  Button
+  TouchableHighlight
 } from 'react-native';
 
 
 export default class TestApp extends Component {
 
   constructor(props) {
+
     super(props);
+    //this.showCategoryList = this.showCategoryList.bind(this);
+
     var ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.dataSource = ds.cloneWithRows( [ 'alpha', 'beta', 'charlie', 'delta', 'echo', 'foxtrot', 'golf', 'hotel', 'india', 'juliet' ] );
-    this.showList = false;
+    
+    this.state = { showList: false };
   }
+
 
   _renderRow(rowData) {
     return <Text style={styles.row}>{rowData}</Text>;
   }
 
+
   render() {
     return (
       <View style={styles.container} >
+
         <Image style={styles.image}
           source = { require('./Traveler.jpg') }
         />
+
         <View style={styles.footer} >
+
           <View style={styles.titleBar}>
+            <TouchableHighlight style={styles.categoryButton} onPress={ this.showCategoryList }>
+              <Image source={ require('./test.png') } />
+            </TouchableHighlight>
             <Text style={styles.titleText}>Hello</Text>
           </View>
-          { this.showList ? <ListView
+
+          { this.state.showList ? <ListView
             dataSource={this.dataSource}
             renderRow={this._renderRow}
+            style={ styles.list }
           /> : null }
-          <TextInput
+
+          { this.state.showList ? null : <TextInput
             style={styles.description}
-          />
+          />}
+
           <Text style={ styles.saveButton }>Save</Text>
+
         </View>
       </View>
     );
   }
-};
+
+  
+  showCategoryList = () => {
+    this.setState({ showList: !this.state.showList });
+  }
+
+}
 
 
 const styles = StyleSheet.create({
@@ -68,13 +91,24 @@ const styles = StyleSheet.create({
 
   titleBar: {
     flex: 1,
+    flexDirection: 'row',
     padding: 8,
-    backgroundColor: 'lightblue'
+    backgroundColor: 'lightblue',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+
+  categoryButton: {
+    width: 30,
+    height: 29,
+    overflow: 'hidden',
+    margin: 2
   },
 
   titleText: {
-    fontSize: 20,
-    textAlign: 'center'
+    flex: 1,
+    textAlign: 'center',
+    fontSize: 20
   },
 
   description: {
@@ -83,6 +117,10 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     borderRadius: 3,
     margin: 4
+  },
+
+  list: {
+    flex: 8
   },
 
   row: {
