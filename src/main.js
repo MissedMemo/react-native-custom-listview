@@ -9,7 +9,8 @@ import React, {
   TextInput,
   ListView,
   Image,
-  TouchableHighlight
+  TouchableHighlight,
+  TouchableOpacity
 } from 'react-native';
 
 
@@ -18,19 +19,18 @@ export default class TestApp extends Component {
   constructor(props) {
 
     super(props);
+
+    this.renderListRow = this.renderListRow.bind(this);
+    this.showCategoryList = this.showCategoryList.bind(this);
+    //this.setCategory = this.setCategory.bind(this);
     
     var ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.dataSource = ds.cloneWithRows( Categories.getCategories() );
     
-    this.state = { showList: false };
-  }
-
-
-  _renderRow(rowData) {
-    return <View style={styles.listRow}>
-             <Image source={ rowData.icon } />
-             <Text style={styles.listRowText}>{ rowData.category }</Text>
-           </View>;
+    this.state = {
+      category: '',
+      showList: false
+    };
   }
 
 
@@ -46,14 +46,14 @@ export default class TestApp extends Component {
 
           <View style={styles.titleBar}>
             <TouchableHighlight style={styles.categoryButton} onPress={ this.showCategoryList }>
-              <Image source={ require('./test.png') } />
+              <Image source={ Categories.getIcon(this.state.category) } />
             </TouchableHighlight>
             <Text style={styles.titleText}>Hello</Text>
           </View>
 
           { this.state.showList ? <ListView
             dataSource={this.dataSource}
-            renderRow={this._renderRow}
+            renderRow={ this.renderListRow }
             style={ styles.list }
           /> : null }
 
@@ -68,9 +68,24 @@ export default class TestApp extends Component {
     );
   }
 
+
+  renderListRow(rowData) {
+    return <TouchableOpacity style={styles.listRow} onPress={ () => this.setCategory(rowData.category) }>
+             <Image source={ rowData.icon } />
+             <Text style={styles.listRowText} >
+               { rowData.category }
+             </Text>
+           </TouchableOpacity>
+  }
+
   
-  showCategoryList = () => {
-    this.setState({ showList: !this.state.showList });
+  showCategoryList() {
+    this.setState({ showList: true });
+  }
+
+
+  setCategory(name) {
+    this.setState({ category: name, showList: false });
   }
 
 }
