@@ -1,4 +1,6 @@
 
+import Categories from './categories';
+
 import React, {
   Component,
   StyleSheet,
@@ -16,17 +18,19 @@ export default class TestApp extends Component {
   constructor(props) {
 
     super(props);
-    //this.showCategoryList = this.showCategoryList.bind(this);
-
+    
     var ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
-    this.dataSource = ds.cloneWithRows( [ 'alpha', 'beta', 'charlie', 'delta', 'echo', 'foxtrot', 'golf', 'hotel', 'india', 'juliet' ] );
+    this.dataSource = ds.cloneWithRows( Categories.getCategories() );
     
     this.state = { showList: false };
   }
 
 
   _renderRow(rowData) {
-    return <Text style={styles.row}>{rowData}</Text>;
+    return <View style={styles.listRow}>
+             <Image source={ rowData.icon } />
+             <Text style={styles.listRowText}>{ rowData.category }</Text>
+           </View>;
   }
 
 
@@ -123,11 +127,18 @@ const styles = StyleSheet.create({
     flex: 8
   },
 
-  row: {
-    fontSize: 24,
+  listRow: {
     padding: 8,
     borderWidth: 1,
-    borderColor: '#DDDDDD'
+    borderColor: '#DDDDDD',
+    flexDirection: 'row',
+    justifyContent: 'center'
+  },
+
+  listRowText: {
+    flex: 1,
+    fontSize: 20,
+    marginLeft: 8
   },
 
   saveButton: {
